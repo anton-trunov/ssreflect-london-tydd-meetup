@@ -38,11 +38,10 @@ Qed.
 (*| For the next example we are going to need some
 "bookkeeping" tacticals:
 
-- the `=>` tactical moves hypotheses from the goal
-to the context;
-
-- the `:` tactical moves hypotheses from the
-context to the goal;
+ - the `=>` tactical moves hypotheses from the goal
+   to the context;
+ - the `:` tactical moves hypotheses from the
+   context to the goal;
 
 and also the `move` tactic which can be thought of
 as a no-op tactic for now. |*)
