@@ -1,0 +1,133 @@
+# This is where to look for reveal.js files
+#+REVEAL_ROOT: ./reveal.js
+# Local style modification
+#+REVEAL_EXTRA_CSS: ./modifications.css
+# fix reveal.js version: go to https://github.com/hakimel/reveal.js/releases and pick the relevant archive
+#+REVEAL_VERSION: 4
+
+#+TITLE: Intro to SSReflect @ London TyDD
+#+AUTHOR: Anton Trunov
+#+DATE: 2021.03.23
+#+EMAIL: @falsenov
+
+#+OPTIONS: num:nil toc:nil timestamp:nil reveal_slide_number:nil
+
+# The animation style of transitions between slides
+#+REVEAL_TRANS: none
+# none | fade | slide | convex | concave | zoom
+
+# Pick your theme from the list below
+#+REVEAL_THEME: simple
+# default | beige | sky | night | serif | simple | moon
+# /League/Sky/Beige/Simple/Serif/Blood/Night/Moon/Solarized
+
+# Title Slide Background Image
+#+REVEAL_TITLE_SLIDE_BACKGROUND: ./images/title-slide-background.png
+#+REVEAL_TITLE_SLIDE_BACKGROUND_SIZE: 1000px
+#+REVEAL_TITLE_SLIDE_BACKGROUND_OPACITY: 1.0
+
+# nested lists unrolled one step at a time
+* What is SSReflect
+- A software package
+- A tactic language
+- A proof methodology
+
+* SSReflect package
+- Part of Mathcomp library (95 kLoC)
+- SSReflect's size is 22kLoC
+- Can be used as an stdlib overlay
+  
+# #+ATTR_REVEAL: :frag roll-in
+* SSReflect package
+- 
+  #+begin_src shell
+$ opam install coq-mathcomp-ssreflect
+  #+end_src
+#+ATTR_REVEAL: :frag roll-in
+- natural numbers
+- sequences (lists)
+#+ATTR_REVEAL: :frag roll-in
+- types with equality
+- types with order
+#+ATTR_REVEAL: :frag roll-in
+- tuples (length-indexed lists)
+- finite types, sets, functions
+- ...
+
+* SSReflect language
+Sample proof:
+#+begin_src coq
+Lemma drop_nseq i j x :
+  drop i (nseq j x) = nseq (j - i) x.
+Proof.
+case:(leqP i j)=> [/subnKC {1}<-|/ltnW j_le_i].
+- by rewrite nseqD drop_size_cat // size_nseq.
+by rewrite drop_oversize
+     ?size_nseq // (eqP j_le_i).
+Qed.
+#+end_src
+
+* SSReflect language
+- Implemented as a Coq plugin
+- Supports SSReflect proof methodology
+- Proof language of Mathcomp and its ecosystem
+#+ATTR_REVEAL: :frag roll-in
+- Extends and changes some defaults of Gallina and redefines some vanilla
+  tactics
+- Compatible with "vanilla" tactics
+
+* SSReflect language
+- Precise bookkeeping
+- No autonaming of assumptions -- lead to fragile proofs
+- Control the size of the proof context
+
+* SSReflect language
+- Implemented as tacticals and easily integrated into the main story of the
+  proof
+- The goal can be thought of as a stack of quantified variables and assumptions as
+  in concatenative languages
+- Tactics act on the top of the stack
+
+* SSReflect proof methodology
+- Aimed at formalization of finite objects in type theory
+- Based on the pervasive use of computation with symbolic representations
+- Statements explicitly contain symbolic representations mixed with logical ones
+  
+* Large-scale reflection
+- Large scale: e.g. =ring= tactic
+  #+ATTR_HTML: :height 500px :align left
+  [[./images/large-scale-reflection.png]]
+  
+* Small-scale reflection
+  #+ATTR_HTML: :height 550px :align left
+  [[./images/small-scale-reflection.png]]
+  
+* SSReflect proof methodology
+- Translation between logical and symbolic representations is made explicit with
+  the proof script
+- The user directs partial evaluation which serves as a local form of proof
+  automation
+
+* =Prop= vs =bool=
+- Connectives in =Prop= are types: natural deduction
+- Connectives in =bool= are functions: brute-force evaluation
+- SSReflect lets you use the best of both worlds
+
+* SSReflect motto
+"If a predicate is decidable, it should be defined as a boolean predicate!"
+  
+* Documentation / books
+- [[http://www-sop.inria.fr/teams/marelle/advanced-coq-17/cheatsheet.pdf][SSReflect cheatsheet]]
+- [[https://coq.github.io/doc/master/refman/proof-engine/ssreflect-proof-language.html][SSReflect chapter]] of the Coq manual
+- [[https://github.com/math-comp/math-comp/wiki/tutorials][math-comp/wiki/tutorials]]
+- [[https://ilyasergey.net/pnp/][Programs and Proofs]] by Ilya Sergey
+- [[https://math-comp.github.io/mcb/][Mathcomp book]] by Assia Mahboubi, Enrico Tassi
+- Generic Proof Tools and Finite Group Theory by François Garillot(2011)
+- Headers in Mathcomp source files: main concepts, notations and general guidance
+
+* How to get help
+- [[https://coq.zulipchat.com][Coq's Zulip chat]], #mathcomp users stream
+- [[https://coq.discourse.group][Coq's Discourse forum]]
+- Ssreflect mailing list
+
+* Proof General time!

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Intro to SSReflect @ London TyDD</title>
+<meta name="author" content="Anton Trunov"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="./reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="./reveal.js/dist/theme/simple.css" id="theme"/>
+
+<link rel="stylesheet" href="./modifications.css"/>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide" data-background="./images/title-slide-background.png" data-background-size="1000px">
+<h1 class="title">Intro to SSReflect @ London TyDD</h1><h2 class="author">Anton Trunov</h2><h2 class="date">2021.03.23</h2>
+</section>
+<section>
+<section id="slide-org78ff9e2">
+<h2 id="org78ff9e2">What is SSReflect</h2>
+<ul>
+<li>A software package</li>
+<li>A tactic language</li>
+<li>A proof methodology</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org7651645">
+<h2 id="org7651645">SSReflect package</h2>
+<ul>
+<li>Part of Mathcomp library (95 kLoC)</li>
+<li>SSReflect's size is 22kLoC</li>
+<li>Can be used as an stdlib overlay</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org4be3231">
+<h2 id="org4be3231">SSReflect package</h2>
+<ul>
+<li><div class="org-src-container">
+
+<pre class="src src-shell">$ opam install coq-mathcomp-ssreflect
+</pre>
+</div></li>
+
+</ul>
+<ul class="fragment roll-in">
+<li>natural numbers</li>
+<li>sequences (lists)</li>
+
+</ul>
+<ul class="fragment roll-in">
+<li>types with equality</li>
+<li>types with order</li>
+
+</ul>
+<ul class="fragment roll-in">
+<li>tuples (length-indexed lists)</li>
+<li>finite types, sets, functions</li>
+<li>&#x2026;</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgc1c1977">
+<h2 id="orgc1c1977">SSReflect language</h2>
+<p>
+Sample proof:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-coq"><span style="color: #4f97d7; font-weight: bold;">Lemma</span> <span style="color: #bc6ec5; font-weight: bold;">drop_nseq</span> i j x :
+  drop i <span style="color: #4f97d7;">(</span>nseq j x<span style="color: #4f97d7;">)</span> = nseq <span style="color: #4f97d7;">(</span>j - i<span style="color: #4f97d7;">)</span> x.
+<span style="color: #4f97d7; font-weight: bold;">Proof</span>.
+<span style="color: #9370db;">case</span>:<span style="color: #4f97d7;">(</span>leqP i j<span style="color: #4f97d7;">)</span>=&gt; <span style="color: #4f97d7;">[</span>/subnKC <span style="color: #bc6ec5;">{</span><span style="color: #a45bad;">1</span><span style="color: #bc6ec5;">}</span>&lt;-|/ltnW j_le_i<span style="color: #4f97d7;">]</span>.
+<span style="color: #2aa1ae; text-decoration: underline;">-</span> <span style="color: #ff0000;">by</span> <span style="color: #9370db;">rewrite</span> nseqD drop_size_cat // size_nseq.
+<span style="color: #ff0000;">by</span> <span style="color: #9370db;">rewrite</span> drop_oversize
+     <span style="color: #7590db;">?size_nseq</span> // <span style="color: #4f97d7;">(</span>eqP j_le_i<span style="color: #4f97d7;">)</span>.
+<span style="color: #4f97d7; font-weight: bold;">Qed</span>.
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgaf6ab17">
+<h2 id="orgaf6ab17">SSReflect language</h2>
+<ul>
+<li>Implemented as a Coq plugin</li>
+<li>Supports SSReflect proof methodology</li>
+<li>Proof language of Mathcomp and its ecosystem</li>
+
+</ul>
+<ul class="fragment roll-in">
+<li>Extends and changes some defaults of Gallina and redefines some vanilla
+tactics</li>
+<li>Compatible with "vanilla" tactics</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgcd0cd7a">
+<h2 id="orgcd0cd7a">SSReflect language</h2>
+<ul>
+<li>Precise bookkeeping</li>
+<li>No autonaming of assumptions &#x2013; lead to fragile proofs</li>
+<li>Control the size of the proof context</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org9ecd035">
+<h2 id="org9ecd035">SSReflect language</h2>
+<ul>
+<li>Implemented as tacticals and easily integrated into the main story of the
+proof</li>
+<li>The goal can be thought of as a stack of quantified variables and assumptions as
+in concatenative languages</li>
+<li>Tactics act on the top of the stack</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org6bac52c">
+<h2 id="org6bac52c">SSReflect proof methodology</h2>
+<ul>
+<li>Aimed at formalization of finite objects in type theory</li>
+<li>Based on the pervasive use of computation with symbolic representations</li>
+<li>Statements explicitly contain symbolic representations mixed with logical ones</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org2692096">
+<h2 id="org2692096">Large-scale reflection</h2>
+<ul>
+<li><p>
+Large scale: e.g. <code>ring</code> tactic
+</p>
+
+<div id="org6be72c6" class="figure">
+<p><img src="./images/large-scale-reflection.png" alt="large-scale-reflection.png" height="500px" align="left" />
+</p>
+</div></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org74481a7">
+<h2 id="org74481a7">Small-scale reflection</h2>
+
+<div id="org093db5e" class="figure">
+<p><img src="./images/small-scale-reflection.png" alt="small-scale-reflection.png" height="550px" align="left" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgc6e8519">
+<h2 id="orgc6e8519">SSReflect proof methodology</h2>
+<ul>
+<li>Translation between logical and symbolic representations is made explicit with
+the proof script</li>
+<li>The user directs partial evaluation which serves as a local form of proof
+automation</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org6e3ed7f">
+<h2 id="org6e3ed7f"><code>Prop</code> vs <code>bool</code></h2>
+<ul>
+<li>Connectives in <code>Prop</code> are types: natural deduction</li>
+<li>Connectives in <code>bool</code> are functions: brute-force evaluation</li>
+<li>SSReflect lets you use the best of both worlds</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org745a479">
+<h2 id="org745a479">SSReflect motto</h2>
+<p>
+"If a predicate is decidable, it should be defined as a boolean predicate!"
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org77f3fea">
+<h2 id="org77f3fea">Documentation / books</h2>
+<ul>
+<li><a href="http://www-sop.inria.fr/teams/marelle/advanced-coq-17/cheatsheet.pdf">SSReflect cheatsheet</a></li>
+<li><a href="https://coq.github.io/doc/master/refman/proof-engine/ssreflect-proof-language.html">SSReflect chapter</a> of the Coq manual</li>
+<li><a href="https://github.com/math-comp/math-comp/wiki/tutorials">math-comp/wiki/tutorials</a></li>
+<li><a href="https://ilyasergey.net/pnp/">Programs and Proofs</a> by Ilya Sergey</li>
+<li><a href="https://math-comp.github.io/mcb/">Mathcomp book</a> by Assia Mahboubi, Enrico Tassi</li>
+<li>Generic Proof Tools and Finite Group Theory by François Garillot(2011)</li>
+<li>Headers in Mathcomp source files: main concepts, notations and general guidance</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org4effe95">
+<h2 id="org4effe95">How to get help</h2>
+<ul>
+<li><a href="https://coq.zulipchat.com">Coq's Zulip chat</a>, #mathcomp users stream</li>
+<li><a href="https://coq.discourse.group">Coq's Discourse forum</a></li>
+<li>Ssreflect mailing list</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org601dcad">
+<h2 id="org601dcad">Proof General time!</h2>
+</section>
+</section>
+</div>
+</div>
+<script src="./reveal.js/dist/reveal.js"></script>
+<script src="./reveal.js/plugin/markdown/markdown.js"></script>
+<script src="./reveal.js/plugin/notes/notes.js"></script>
+<script src="./reveal.js/plugin/search/search.js"></script>
+<script src="./reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: false,
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+
+overview: true,
+
+transition: 'none',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>
