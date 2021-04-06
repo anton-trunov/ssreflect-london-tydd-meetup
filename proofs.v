@@ -41,7 +41,7 @@ Qed.
  - the `=>` tactical moves hypotheses from the goal
    to the context;
  - the `:` tactical moves hypotheses from the
-   context to the goal;
+context to the goal;
 
 and also the `move` tactic which can be thought of
 as a no-op tactic for now. |*)
@@ -96,8 +96,7 @@ hiding some Ltac code which is now allowed in
 views. *)
 
 Restart.
-move/[apply].
-done.
+by move/[apply].
 
 (* Or, more concisely: `by move/[apply].`.
 Here, we've used the `by` tactical which works a
@@ -152,6 +151,10 @@ Qed.
 
 (*| The `//` tactical: prove trivial goals
 automatically. |*)
+
+Lemma dup {D} : D -> D * D.
+Proof. done. Qed.
+
 Lemma HilbertS :
   (A -> B -> C) -> (A -> B) -> A -> C.
 Proof.
@@ -165,6 +168,11 @@ Restart.
 (* Here is a, perhaps, weird proof using the
 `/[dup]` view lemma which duplicated the top
 assumption. *)
+(* move=> abc ab. move/[dup]. move/ab. move=> b. *)
+(* move /abc. move/(_ b). done. *)
+
+by move=> abc ab /dup[] /ab b /abc /(_ b).
+Restart.
 by move=> abc ab /[dup] /ab b /abc /(_ b).
 Qed.
 
@@ -185,9 +193,7 @@ Context (P : T -> Prop).
 Implicit Types x y z : T.
 
 Goal ~(exists x, P x) -> forall x, ~P x.
-Proof.
-by move=> ne x px; apply: ne; eexists; apply: px.
-Qed.
+Proof. by move=> + x px; apply; exists x. Qed.
 
 Goal (exists x, A -> P x) -> (forall x, ~P x) -> ~A.
 Proof.
@@ -204,15 +210,20 @@ of equalities *)
 Abort.
 
 (* An example with natural numbers: *)
+Lemma foo n m :
+  n.+1 = m.+1 -> n = m.
+Proof. by case. Qed.
+
 Goal forall n m,
   n.+1 = m.+1 -> n = m.
 Proof.
 move=> n m.
+Locate ".+1".
 case.
 done.
+Restart.
+by move=> n m [].
 Qed.
-
-
 
 (*| The `[]` tactical to do case-analysis in-place
 |*)
@@ -221,6 +232,7 @@ Proof.
 by move=> [ [a | b] c ]; [left | right].
 Qed.
 
+(* WE ARE HERE *)
 
 (*|
 Interpreting goals: `apply/`
@@ -298,4 +310,19 @@ elim: x=> [| x IHx]; first by rewrite addn0.
 (* `first` tactical lets us to not focus on
 trivial goals |*)
 by rewrite addSn IHx -addSnnS.
+Qed.
+
+
+
+
+(* === Second talk: canonical structures demo === *)
+
+From mathcomp Require Import ssreflect ssrnat bigop.
+Import Monoid.
+
+Lemma demo m n p q r :
+  m + (n + p * (q * r)) = m + n + p * q * r.
+Proof.
+rewrite !mulmA /=.
+done.
 Qed.
